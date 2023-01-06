@@ -1,0 +1,43 @@
+GoldenImage:
+  WindowsBase:
+    VM_Name: "W10x64"               # TBD
+    Domain:
+      Attach: false                 # TBD
+      Domain: "domain.com"          # TBD
+      svc-account: svc-ad           # TBD
+      svc-pw: "Password"            # TBD
+    SevenZip: true                  # Install 7Zip
+    DotNet35: true                  # Install Microsoft .Net Framework 3.5
+    Updates: false                  # TBD - Doesn't like multiple reboots. Apply Windows Updates, this can cause a longer build time.
+    LAPS: false                     # Local Administrator Password Solution TBD
+    RDP: false
+    Horizon:
+      Deploy: true                   # Install VMWare Horizon View agent.
+      Build: "2209"
+      DirectConnect: true            # Install VMWare Horizon Direct Connect agent
+      VMwareOSOptimizationTool:
+        Build: 'v1'                   # Run VMWare optimization and Apply default template.
+        BaseOptimization: false       # **Note** Will disable OneDrive, if Onedrive needed rung this manually.
+        CommonAppsRemove: true
+        VisualEffect:                 # Only one visual effect can be applied
+          Performance: false          # Not Working
+          Balance: false              # Not Working
+          Quality: false              # Not Working
+        Finalize:
+          RunTasks: true              # Run Finalize task within tool 
+          ClearVMwareLogs: true
+          ClearEventLogs: true
+    NVidia: false                    # Install NVIdia drivers - TBD
+    Temp_Dir: 'C:\Temp'
+    Agents_Dir: 'C:\Tools\Agents'
+    AppVolumes:
+      Deploy: false                    # Install VMWare AppVolumes agent.
+      URL: avm.domain.com            # URL - FQDN of the AppVolumes VIP or Server.
+      Build: "2209"
+      CaptureVM: false
+    DEM:
+      DeployStandard: false           # Install VMWare Standard DEM agent. 
+      DeployEnterprise: false         # Install VMWare Enterprise DEM agent. 
+      Build: "2209"
+      CaptureVM: false
+    CleanUpFiles: true               # Cleanup left over Agents on Image

@@ -1,0 +1,55 @@
+---
+- hosts: default
+#- hosts: win
+  gather_facts: no
+  vars:
+    ansible_become_user: W10x64_Ent\administrator
+    ansible_become_password: VMware1!
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars_files: 
+    - vars/config.yml 
+    - vars/software.yml
+  tasks:
+
+  ##   Comments: Copy AppVolumes ISO to C:\Temp\Agents Folder
+
+    - name: Transferring AppVolumes ISO {{ Software.W10x64.VMware.AppVolumes.Agents[GoldenImage.WindowsBase.AppVolumes.Build].File }} file to {{ GoldenImage.WindowsBase.Agents_Dir }} folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/AppVolumes/{{ GoldenImage.WindowsBase.AppVolumes.Build }}/{{ Software.W10x64.VMware.AppVolumes.Agents[GoldenImage.WindowsBase.AppVolumes.Build].File }}
+        dest: "{{ GoldenImage.WindowsBase.Agents_Dir }}"
+        force: no
+      when:
+        - GoldenImage.WindowsBase.AppVolumes.Deploy == true
+
+##   Comments: Extracting and Installing AppVolumes Agent
+
+    - name: Extract AppVolumes 4 Agent from ISO
+      ansible.windows.win_command: 7z.exe e {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.AppVolumes.Agents[GoldenImage.WindowsBase.AppVolumes.Build].File }} -aoa -o{{ GoldenImage.WindowsBase.Agents_Dir }} *Agent.msi -r
+      args:
+        chdir: 'C:\Program Files\7-Zip'
+      when:
+        - GoldenImage.WindowsBase.AppVolumes.Deploy == true
+
+    - name: Install AppVolumes 4 Agent
+      ansible.windows.win_package:
+        path: '{{ GoldenImage.WindowsBase.Agents_Dir }}\App Volumes Agent.msi'
+        product_id: App Volumes Agent
+        arguments: /qn MANAGER_ADDR={{ GoldenImage.WindowsBase.AppVolumes.URL }} MANAGER_PORT=443 /norestart
+        state: present
+      become: yes
+      become_method: runas
+      when:
+        - GoldenImage.WindowsBase.AppVolumes.Deploy == true
+
+    - name: Cleanup Agent Files
+      ansible.windows.win_file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.AppVolumes.Agents[GoldenImage.WindowsBase.AppVolumes.Build].File }}'
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\App Volumes Agent.msi'
+      when:
+        - GoldenImage.WindowsBase.CleanUpFiles == true

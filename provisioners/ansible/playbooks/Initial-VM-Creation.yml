@@ -1,0 +1,42 @@
+##
+##    Project: Horizon Windows 10 Build
+##    Authors: Karl Newick
+##   Filename: playbooks/Initial-VM-Creation.yml
+##
+##   Comments: This playbook is created to perform tasks needed to prepare the 
+##             
+##
+##  https://kb.vmware.com/s/article/2118048 Agent Install Order
+  
+  ## playbook applies Registry, .Net 3.5, 7Zip, Copy Tools and Apply Windows Updates 
+  - ansible.builtin.import_playbook: baseConfig.yml
+
+  ## Install Horizon Agents
+  - ansible.builtin.import_playbook: installHorizon.yml
+
+  ## Install DEM Agents
+  - ansible.builtin.import_playbook: installDEM.yml
+
+  ## Install AppVolumes Agents
+  - ansible.builtin.import_playbook: installAppVolumes.yml
+
+  ## playbook applies VMWare Horizon VMwareOS Optimization Tool
+  - ansible.builtin.import_playbook: VMwareHorizonOSOptimizationTool.yml
+  
+  ## Install Finalize Image
+  - ansible.builtin.import_playbook: Finalize.yml
+
+
+
+
+#     - name: Wait for system to become reachable over WinRM
+#       wait_for_connection:
+#         timeout: 900
+
+
+      
+
+
+
+
+

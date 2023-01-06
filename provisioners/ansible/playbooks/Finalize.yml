@@ -1,0 +1,50 @@
+---
+- hosts: default
+#- hosts: win
+  gather_facts: no
+  vars:
+    ansible_become_user: W10x64_Ent\administrator
+    ansible_become_password: VMware1!
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars_files: 
+    - vars/config.yml 
+    - vars/software.yml
+  tasks:
+##   Comments: Transfer VMware OS Optimization Tool
+    - name:  Transferring VMware OS Optimization Tool {{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} file to '{{ GoldenImage.WindowsBase.Agents_Dir }}' folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/VMwareOSOptimizationTool/{{ GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build }}/
+        dest: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+        force: no
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Finalize.RunTasks == true
+
+##   Comments: Finalize VM before shutdown
+    - name: Finalize - This will take time - KB https://techzone.vmware.com/resource/windows-os-optimization-tool-vmware-horizon-guide#finalize-A
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -f 0 1 2 3 4 5 6 7'
+      # {{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s 
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Finalize.RunTasks == false
+
+##   Comments: Clear VMware Logs
+
+    - name: Clear VMware Logs
+      ansible.windows.win_command: C:\Tools\CleanVMwareLogs.bat
+      args:
+        chdir: C:\Tools
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Finalize.ClearVMwareLogs == true
+
+##   Comments: Clear Windows Event Logs
+
+    - name: Clear Windows Event Logs
+      ansible.windows.win_command: C:\Tools\CleanWindowEvents.bat
+      args:
+        chdir: C:\Tools
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Finalize.ClearEventLogs == true

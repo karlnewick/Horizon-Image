@@ -1,0 +1,329 @@
+##
+##    Project: Horizon Golden Image
+##    Authors: Karl Newick
+##   Filename: _sample.yml
+##
+---
+RootDirectory: "/Software"
+
+Software:
+    W10x64:
+      VMware:
+        View:
+          Agents:
+            "7.12":
+              Name: Horizon View Agent 7.12
+              File: VMware-Horizon-Agent-x86_64-7.12.0-15805436.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/7.12"
+                URL:
+              Version: "7.12"
+              FileExt: exe
+            "7.13":
+              Name: Horizon View Agent 7.13
+              File: VMware-Horizon-Agent-x86_64-7.13.0-16975066.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/7.13"
+                URL:
+              Version: "7.13"
+              FileExt: exe
+            "7.13.1":
+              Name: Horizon View Agent 7.13.1
+              File: VMware-Horizon-Agent-x86_64-7.13.1-18035779.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/7.13.1"
+                URL:
+              Version: "7.13.1"
+              FileExt: exe
+            "7.13.2":
+              Name: Horizon View Agent 7.13.2
+              File: VMware-Horizon-Agent-x86_64-7.13.2-19438394.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/7.13.2"
+                URL:
+              Version: "7.13.2"
+              FileExt: exe
+            "2006":
+              Name: Horizon View Agent 8 2006
+              File: VMware-Horizon-Agent-x86_64-8.0.0-16530789.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2006"
+                URL:
+              Version: "2006"
+              FileExt: exe
+            "2012":
+              Name: Horizon View Agent 8 2103
+              File: VMware-Horizon-Agent-x86_64-2012-8.1.0-17352461.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2012"
+                URL:
+              Version: "2012"
+              FileExt: exe
+            "2103":
+              Name: Horizon View Agent 8 2103
+              File: VMware-Horizon-Agent-x86_64-2103-8.2.0-17771933.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2103"
+                URL:
+              Version: "2103"
+              FileExt: exe
+            "2106":
+              Name: Horizon View Agent 8 2106
+              File: VMware-Horizon-Agent-x86_64-2106-8.3.0-18287218.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2106"
+                URL:
+              Version: "2106"
+              FileExt: exe
+            "2111":
+              Name: Horizon View Agent 8 2111
+              File: VMware-Horizon-Agent-x86_64-2111-8.4.0-19446757.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2111"
+                URL:
+              Version: "2111"
+              FileExt: exe                    
+            "2206":
+              Name: Horizon View Agent 8 2206
+              File: VMware-Horizon-Agent-x86_64-2206-8.6.0-20088748.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2206"
+                URL:
+              Version: "2206"
+              FileExt: exe
+            "2209":
+              Name: Horizon View Agent 8 2209
+              File: VMware-Horizon-Agent-x86_64-2209-8.7.0-20606795.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/Agents/2209"
+                URL:
+              Version: "2209"
+              FileExt: exe              
+          DirectConnect:
+            "7.12":
+              Name: Horizon View Agent Direct Connect 7.12
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-7.12.0-15805436.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/7.12"
+                URL:
+              Version: "7.12"
+              FileExt: exe            
+              Patches: []
+            "7.13":
+              Name: Horizon View Agent Direct Connect 7.13
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-7.13.0-16975066.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/7.13"
+                URL:
+              Version: "7.12"
+              FileExt: exe            
+              Patches: []
+            "7.13.1":
+              Name: Horizon View Agent Direct Connect 7.13.1
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-7.13.1-18035779.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/7.13.1"
+                URL:
+              Version: "7.13.1"
+              FileExt: exe            
+              Patches: []
+            "7.13.2":
+              Name: Horizon View Agent Direct Connect 7.13.2
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-7.13.2-19438394.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/7.13.2"
+                URL:
+              Version: "7.13.2"
+              FileExt: exe            
+              Patches: []
+            "2006":
+              Name: Horizon View Agent Direct Connect 8 2006
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-8.0.0-16530789.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/2006"
+                URL:
+              Version: "2006"
+              FileExt: exe
+            "2012":
+              Name: Horizon View Agent Direct Connect 8 2012
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-8.1.0-17352461.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/2012"
+                URL:
+              Version: "2012"
+              FileExt: exe
+            "2103":
+              Name: Horizon View Agent Direct Connect 8 2103
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-2.0-17771933.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/2103"
+                URL:
+              Version: "2103"
+              FileExt: exe
+            "2111":
+              Name: Horizon View Agent Direct Connect 8 2111
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-8.4.0-18964730.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/2111"
+                URL:
+              Version: "2111"
+              FileExt: exe
+            "2206":
+              Name: Horizon View Agent Direct Connect 8 2206
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-8.6.0-20088748.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/2206"
+                URL:
+              Version: "2206"
+              FileExt: exe 
+            "2209":
+              Name: Horizon View Agent Direct Connect 8 2209
+              File: VMware-Horizon-Agent-Direct-Connection-x86_64-8.7.0-20606795.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/View/DirectConnect/2209"
+                URL:
+              Version: "2209"
+              FileExt: exe
+        DEM:
+          Standard:
+            "2009":
+              Name: VMware Dynamic Environment Agent Standard 2009
+              File: VMware-DEM-Standard-10.1-GA.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Std/2009"
+                URL:
+              Version: "2009"
+              FileExt: zip
+            "2103":
+              Name: VMware Dynamic Environment Agent Standard 2103
+              File: VMware-DEM-Standard-2103-10.2.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Std/2103"
+                URL:
+              Version: "2103"
+              FileExt: zip
+            "2111":
+              Name: VMware Dynamic Environment Agent Standard 2111
+              File: VMware-DEM-Standard-2111-10.4.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Std/2111"
+                URL:
+              Version: "2111"
+              FileExt: zip
+            "2206":
+              Name: VMware Dynamic Environment Agent Standard 2206
+              File: VMware-DEM-Standard-2206-10.6.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Std/2206"
+                URL:
+              Version: "2206"
+              FileExt: zip
+            "2209":
+              Name: VMware Dynamic Environment Agent Standard 2209
+              File: VMware-DEM-Standard-2209-10.7.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Std/2209"
+                URL:
+              Version: "2209"
+              FileExt: zip
+          Enterprise:
+            "2009":
+              Name: VMware Dynamic Environment Agent Enterprise 2009
+              File: VMware-DEM-Enterprise-10.1-GA.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Ent/2009"
+                URL:
+              Version: "2009"
+              FileExt: zip
+            "2103":
+              Name: VMware Dynamic Environment Agent Enterprise 2103
+              File: VMware-DEM-Enterprise-2103-10.2-GA.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Ent/2103"
+                URL:
+              Version: "2103"
+              FileExt: zip
+            "2111":
+              Name: VMware Dynamic Environment Agent Enterprise 2111
+              File: VMware-DEM-Enterprise-2111-10.4-GA.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Ent/2111"
+                URL:
+              Version: "2111"
+              FileExt: zip
+            "2206":
+              Name: VMware Dynamic Environment Agent Enterprise 2206
+              File: VMware-DEM-Enterprise-2206-10.6-GA.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Ent/2206"
+                URL:
+              Version: "2206"
+              FileExt: zip
+            "2209":
+              Name: VMware Dynamic Environment Agent Enterprise 2209
+              File: VMware-DEM-Enterprise-2209-10.7-GA.zip
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/DEM/Ent/2209"
+                URL:
+              Version: "2209"
+              FileExt: zip               
+        AppVolumes:
+          Agents:
+            "2006":
+              Name: App Volumes 4.1.0
+              File: VMware_App_Volumes_v4.1.0.59_13082020.ISO
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/AppVolumes/2006"
+                URL:
+              Version: "4.1.0"
+              FileExt: iso
+            "2009":
+              Name: App Volumes 4.2.0
+              File: VMware_App_Volumes_v4.2.0.48_30092020.ISO
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/AppVolumes/2009"
+                URL:
+              Version: "4.2.0"
+              FileExt: iso
+            "2103":
+              Name: App Volumes 4.4.1
+              File: VMware_App_Volumes_v4.4.1.4_12052021.ISO
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/AppVolumes/2103"
+                URL:
+              Version: "4.4.1"
+              FileExt: iso
+            "2111":
+              Name: App Volumes 2111 4.5.1.10
+              File: VMware_App_Volumes_v4.5.1.10_15022022.ISO
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/AppVolumes/2111"
+                URL:
+              Version: "2111"
+              FileExt: iso
+            "2206":
+              Name: App Volumes 2206 4.7.0.64
+              File: VMware_App_Volumes_v4.7.0.64_12072022.ISO
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/AppVolumes/2206"
+                URL:
+              Version: "2206"
+              FileExt: iso
+            "2209":
+              Name: App Volumes 2209 4.8.0.33
+              File: VMware_App_Volumes_v4.8.0.33_19092022.ISO
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/AppVolumes/2206"
+                URL:
+              Version: "2206"
+              FileExt: iso
+        VMwareOSOptimizationTool:
+            "v1":
+              Name: VMware Horizon OS Optimization Tool
+              File: VMwareHorizonOSOptimizationTool-x86_64-1.0_2111.exe
+              Location:
+                Local: "{{ RootDirectory }}/VMware/Horizon/VMwareOSOptimizationTool/v1"
+                URL:
+              Version: "v1"
+              FileExt: exe
+              

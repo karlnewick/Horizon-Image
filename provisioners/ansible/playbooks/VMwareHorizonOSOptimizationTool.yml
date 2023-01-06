@@ -1,0 +1,83 @@
+---
+- hosts: default
+#- hosts: win
+  gather_facts: no
+  vars:
+    ansible_become_user: W10x64_Ent\administrator
+    ansible_become_password: VMware1!
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars_files: 
+    - vars/config.yml 
+    - vars/software.yml
+  tasks:
+    
+##   Comments: Copy VMware OS Optimizations to C:\Temp\Agents Folder
+
+    - name:  Transferring VMware OS Optimization Tool {{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} file to '{{ GoldenImage.WindowsBase.Agents_Dir }}' folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/VMwareOSOptimizationTool/{{ GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build }}/
+        dest: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+        force: no
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.BaseOptimization == true or
+          GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.CommonAppsRemove == true
+
+    - name: Create VMwareOSOptimizationTool HTML report
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -r {{ GoldenImage.WindowsBase.Agents_Dir }}'
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.BaseOptimization == true
+      tags: test
+
+    - name: Apply VMware OS Optimization based on Latest Template
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -o -t "VMware Templates\\Windows 10, 11 and Servers 2019, 2022"'
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.BaseOptimization == true
+      
+
+    - name: Remove Windows 10 Common Apps
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -o -storeapp remove-all'
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.CommonAppsRemove == true
+
+    - name: Apply Visual Effect Performance
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -o -visualeffect performance'
+      become: yes
+      become_method: runas
+      become_user: system
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.VisualEffect.Performance == true
+
+    - name: Apply Visual Effect Balance
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -o -visualeffect balanced'
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.VisualEffect.Balance == true
+
+    - name: Apply Visual Effect Quality
+      ansible.windows.win_command: '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe -accepteula -nobanner -i 1 -s {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.VMwareOSOptimizationTool[GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.Build].File }} -o -visualeffect Quality'
+      args:
+        chdir: '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+      when:
+        - GoldenImage.WindowsBase.Horizon.VMwareOSOptimizationTool.VisualEffect.Quality == true
+    - name: Cleanup Agent Files
+      ansible.windows.win_file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\psexec.exe'
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\PSTools.Zip'
+              
+      when:
+        - GoldenImage.WindowsBase.CleanUpFiles == true

@@ -1,0 +1,123 @@
+---
+- hosts: default
+#- hosts: win
+  gather_facts: no
+  vars:
+    ansible_become_user: W10x64_Ent\administrator
+    ansible_become_password: VMware1!
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars_files: 
+    - vars/config.yml 
+    - vars/software.yml
+  tasks:
+
+##   Comments: Copy DEM Standard Agent to C:\Temp\Agents Folder
+
+    - name: Transferring DEM Agent {{ Software.W10x64.VMware.DEM.Standard[GoldenImage.WindowsBase.DEM.Build].File }} file to {{ GoldenImage.WindowsBase.Agents_Dir }} folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/DEM/Std/{{ GoldenImage.WindowsBase.DEM.Build }}/{{ Software.W10x64.VMware.DEM.Standard[GoldenImage.WindowsBase.DEM.Build].File }}
+        dest: "{{ GoldenImage.WindowsBase.Agents_Dir }}"
+        force: no
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployStandard == true
+      
+
+##   Comments: Copy DEM Enterprise Agent to C:\Temp\Agents Folder
+
+    - name: Transferring DEM Agent {{ Software.W10x64.VMware.DEM.Enterprise[GoldenImage.WindowsBase.DEM.Build].File }} file to {{ GoldenImage.WindowsBase.Agents_Dir }} folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/DEM/Ent/{{ GoldenImage.WindowsBase.DEM.Build }}/{{ Software.W10x64.VMware.DEM.Enterprise[GoldenImage.WindowsBase.DEM.Build].File }}
+        dest: "{{ GoldenImage.WindowsBase.Agents_Dir }}"
+        force: no
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployEnterprise == true and
+          GoldenImage.WindowsBase.Horizon.Deploy == true
+
+##   Comments: Extracting and Installing DEM Standard Agent
+
+    - name: Extract DEM Standard Agent from {{ Software.W10x64.VMware.DEM.Standard[GoldenImage.WindowsBase.DEM.Build].File }}
+      ansible.windows.win_command: 7z.exe e {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.DEM.Standard[GoldenImage.WindowsBase.DEM.Build].File }} -aoa -o{{ GoldenImage.WindowsBase.Agents_Dir }} "VMware Dynamic Environment Manager Standard*x64.msi" -r
+      args:
+        chdir: 'C:\Program Files\7-Zip'
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployStandard == true and
+          GoldenImage.WindowsBase.Horizon.Deploy == true
+
+
+    - name: List DEM Standard MSI File in Temp Directory
+      ansible.windows.win_find:
+        paths:  '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+        patterns: ['VMware Dynamic Environment Manager*.msi']
+      register: DEM_MSI_STD
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployStandard == true
+
+    - name: Install DEM Standard Agent - {{ DEM_MSI_STD.files[0].filename }} - If Fails check to see if Horizon Agent installed
+      ansible.windows.win_package:
+        path: '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ DEM_MSI_STD.files[0].filename }}'
+        product_id: VMware Dynamic Environment Manager Standard
+        arguments: /qn ADDLOCAL=FlexEngine /l {{ GoldenImage.WindowsBase.Agents_Dir }}\InstallDEM.log
+        state: present
+      become: yes
+      become_method: runas
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployStandard == true and
+          GoldenImage.WindowsBase.Horizon.Deploy == true
+      
+
+  ##   Comments: Extracting from and Installing DEM Enterprise Agent
+
+    - name: Extract DEM Enterprise Agent from {{ Software.W10x64.VMware.DEM.Enterprise[GoldenImage.WindowsBase.DEM.Build].File }}
+      ansible.windows.win_command: 7z.exe e {{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.DEM.Enterprise[GoldenImage.WindowsBase.DEM.Build].File }} -aoa -o{{ GoldenImage.WindowsBase.Agents_Dir }} "VMware Dynamic Environment Manager Enterprise*x64.msi" -r
+      args:
+        chdir: 'C:\Program Files\7-Zip'
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployEnterprise == true and
+          GoldenImage.WindowsBase.Horizon.Deploy == true
+  
+    - name: List DEM Enterprise MSI File in Temp Directory
+      ansible.windows.win_find:
+        paths:  '{{ GoldenImage.WindowsBase.Agents_Dir }}'
+        patterns: ['VMware Dynamic Environment Manager*.msi']
+      register: DEM_MSI_Ent
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployEnterprise == true
+
+    - name: Install DEM Enterprise - If Fails check to see if Horizon Agent installed
+      ansible.windows.win_package:
+        path: '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ DEM_MSI_Ent.files[0].filename }}'
+        product_id: VMware Dynamic Environment Manager Enterprise
+        arguments: /qn ADDLOCAL=FlexEngine /l {{ GoldenImage.WindowsBase.Agents_Dir }}\InstallDEM.log
+        state: present
+      become: yes
+      become_method: runas
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployEnterprise == true and
+          GoldenImage.WindowsBase.Horizon.Deploy == true
+
+    - name: Cleanup Agent Standard Files
+      ansible.windows.win_file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.DEM.Standard[GoldenImage.WindowsBase.DEM.Build].File }}'
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ DEM_MSI_STD.files[0].filename }}'
+      ignore_errors: yes
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployStandard == true and
+          GoldenImage.WindowsBase.CleanUpFiles == true
+
+    - name: Cleanup Agent Enterprise Files
+      ansible.windows.win_file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.DEM.Enterprise[GoldenImage.WindowsBase.DEM.Build].File }}'
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ DEM_MSI_Ent.files[0].filename }}'
+      ignore_errors: yes
+      when:
+        - GoldenImage.WindowsBase.DEM.DeployEnterprise == true and
+          GoldenImage.WindowsBase.CleanUpFiles == true

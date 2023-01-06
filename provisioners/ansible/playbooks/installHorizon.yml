@@ -1,0 +1,93 @@
+##
+##    Project: Horizon Windows 10 Build
+##    Authors: Karl Newick
+##   Filename: playbooks/Initial-VM-Creation.yml
+##
+##   Comments: This playbook is created to Install Horizon Agent and Direct-Connectmv 
+##             
+##
+##
+---
+- hosts: default
+#- hosts: win
+  gather_facts: no
+  vars:
+    ansible_become_user: W10x64_Ent\administrator
+    ansible_become_password: VMware1!
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars_files: 
+    - vars/config.yml 
+    - vars/software.yml
+  tasks:
+
+  ##   Comments: Wait for system to become reachable over WinRM
+    - name: Wait for system to become reachable over WinRM
+      wait_for_connection:
+        timeout: 900
+    
+
+  ##   Comments: Copy Horizon Agents to C:\Tools\Agents Folder
+
+    - name:  Transferring Horizon Agent file {{ Software.W10x64.VMware.View.Agents[GoldenImage.WindowsBase.Horizon.Build].File }} file to {{ GoldenImage.WindowsBase.Agents_Dir }} folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/View/Agents/{{ GoldenImage.WindowsBase.Horizon.Build }}/
+        dest: "{{ GoldenImage.WindowsBase.Agents_Dir }}"
+        force: no
+      when:
+        - GoldenImage.WindowsBase.Horizon.Deploy == true
+
+##   Comments: Copy Horizon DirectConnect Agents to C:\Temp\Agents Folder
+
+    - name: Transferring Horizon DirectConnect Agent {{ Software.W10x64.VMware.View.DirectConnect[GoldenImage.WindowsBase.Horizon.Build].File }} file to {{ GoldenImage.WindowsBase.Agents_Dir }} folder
+      ansible.windows.win_copy:
+        src: /Software/VMware/Horizon/View/DirectConnect/{{ GoldenImage.WindowsBase.Horizon.Build }}/{{ Software.W10x64.VMware.View.DirectConnect[GoldenImage.WindowsBase.Horizon.Build].File }}
+        dest: "{{ GoldenImage.WindowsBase.Agents_Dir }}"
+        force: no
+      when:
+        - GoldenImage.WindowsBase.Horizon.DirectConnect == true and
+          GoldenImage.WindowsBase.Horizon.Deploy == true
+
+##   Comments: Installing VMware Horizon Agent
+
+    - name: Installing VMware Horizon Agent using {{ Software.W10x64.VMware.View.Agents[GoldenImage.WindowsBase.Horizon.Build].File }}
+      ansible.windows.win_package:
+        path: '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.View.Agents[GoldenImage.WindowsBase.Horizon.Build].File }}'
+        product_id: "VMware Horizon Agent"
+        arguments: /l {{ GoldenImage.WindowsBase.Agents_Dir }}\Horizon.Agentinstall.log /s /v"/qn REBOOT=ReallySuppress ADDLOCAL=Core,NGVC,USB,RTAV,PerfTracker,HelpDesk,VmwVaudio,VmwVidd,TSMMR,RDP,BlastUDP" 
+        state: present
+      become: yes
+      become_method: runas
+      become_user: system
+      ignore_errors: yes
+      #expected_return_code: [0, 1603]
+      when:
+        - GoldenImage.WindowsBase.Horizon.Deploy == true
+      
+##   Comments: Installing VMware Horizon Direct-Connection Plug-In
+      
+    - name: Installing VMware Horizon Direct-Connection Plug-In using {{ Software.W10x64.VMware.View.DirectConnect[GoldenImage.WindowsBase.Horizon.Build].File }}
+      ansible.windows.win_package:
+        path: '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.View.DirectConnect[GoldenImage.WindowsBase.Horizon.Build].File }}'
+        product_id: "VMware Horizon Agent Direct Connection"
+        arguments: /s
+        state: present
+      become: yes
+      become_method: runas
+      become_user: system
+      ignore_errors: yes
+      when:
+        - GoldenImage.WindowsBase.Horizon.Deploy == true and
+          GoldenImage.WindowsBase.Horizon.DirectConnect == true
+
+    - name: Cleanup Agent Files
+      ansible.windows.win_file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.View.DirectConnect[GoldenImage.WindowsBase.Horizon.Build].File }}'
+        - '{{ GoldenImage.WindowsBase.Agents_Dir }}\{{ Software.W10x64.VMware.View.Agents[GoldenImage.WindowsBase.Horizon.Build].File }}'
+      when:
+        - GoldenImage.WindowsBase.CleanUpFiles == true

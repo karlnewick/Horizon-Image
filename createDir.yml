@@ -1,0 +1,48 @@
+##
+##    Project: Horizon Golden Image
+##    Authors: Karl Newick
+##   Filename: createDir.yml
+##
+---
+- hosts: localhost
+  vars_files:
+    - provisioners/ansible/playbooks/vars/software.yml
+  tasks:
+##
+## VMware
+##
+
+    - name: Create Horizon View Agents directories
+      file:
+        path: "{{ item.value.Location.Local }}"
+        state: directory
+        mode: "0775"
+      loop: "{{ Software.W10x64.VMware.View.Agents | dict2items }}"
+
+    - name: Create Horizon View Agents directories
+      file:
+        path: "{{ item.value.Location.Local }}"
+        state: directory
+        mode: "0775"
+      loop: "{{ Software.W10x64.VMware.View.DirectConnect | dict2items }}"
+
+    - name: Create DEM Agents directories
+      file:
+        path: "{{ item.value.Location.Local }}"
+        state: directory
+        mode: "0775"
+      loop: "{{ Software.W10x64.VMware.DEM.StandardAgents | dict2items }}"
+    
+    - name: Create DEM Agents directories
+      file:
+        path: "{{ item.value.Location.Local }}"
+        state: directory
+        mode: "0775"
+      loop: "{{ Software.W10x64.VMware.DEM.EnterpriseAgents | dict2items }}"
+
+    - name: Create AppVolumes Agents directories
+      file:
+        path: "{{ item.value.Location.Local }}"
+        state: directory
+        mode: "0775"
+      loop: "{{ Software.W10x64.VMware.AppVolumes.Agents | dict2items }}"
